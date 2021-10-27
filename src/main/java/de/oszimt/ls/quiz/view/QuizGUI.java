@@ -5,7 +5,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
-import java.net.URLClassLoader;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -189,7 +188,8 @@ public class QuizGUI extends JFrame {
 		lblSpielstand.setBounds(180, 100, 444, 70);
 		contentPane.add(lblSpielstand);
 
-		ImageIcon icon = new ImageIcon("oszimt.png");
+		URL url = Res.class.getResource("oszimt.png");
+		ImageIcon icon = new ImageIcon(url);
 		this.setIconImage(icon.getImage());
 
 		lblFrage = new JLabel[control.FRAGEANZAHL];
@@ -244,7 +244,7 @@ public class QuizGUI extends JFrame {
 		if (control.getGewaehlterSchueler() != null) {
 			control.nichtDa();
 			control.getZufallsSchueler();
-			this.lblSchueler.setText(control.getGewaehlterSchueler().getName());
+			this.lblSchueler.setText(control.getGewaehlterSchueler().getFullName());
 		}
 	}
 }

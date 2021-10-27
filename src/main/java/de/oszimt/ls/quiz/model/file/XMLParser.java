@@ -9,15 +9,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import de.oszimt.ls.quiz.model.Model;
-import de.oszimt.ls.quiz.model.Schueler;
-import de.oszimt.ls.quiz.model.Spielstand;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.oszimt.ls.quiz.StartQuiz;
+import de.oszimt.ls.quiz.model.Model;
+import de.oszimt.ls.quiz.model.Schueler;
+import de.oszimt.ls.quiz.model.Spielstand;
 
 public class XMLParser {
 
@@ -49,6 +48,7 @@ public class XMLParser {
 
 	/**
 	 * Lädt die XML Datei
+	 * 
 	 * @return Model der XML-Datei
 	 */
 	public Model laden() {
@@ -64,23 +64,23 @@ public class XMLParser {
 
 			// Auslesen
 
-			//Spielstand laden
+			// Spielstand laden
 			createSpielstand(doc, model);
 
 			// Ebene Schueler / Mitspieler
-			Element mitspieler = (Element) doc.getElementsByTagName("Mitspieler").item(0);
-			NodeList schuelerList = mitspieler.getElementsByTagName("Schueler");
+			NodeList schuelerList = doc.getElementsByTagName("Mitspieler").item(0).getChildNodes();
 
 			// Schueler auslesen
 			for (int i = 0; i < schuelerList.getLength(); i++) {
 				Element schueler = (Element) schuelerList.item(i);
 				String name = schueler.getAttribute("name");
+				String vorname = schueler.getAttribute("vorname");
 
 				int joker = Integer.parseInt(schueler.getElementsByTagName("Joker").item(0).getTextContent());
 				int blamiert = Integer.parseInt(schueler.getElementsByTagName("Blamiert").item(0).getTextContent());
 				int fragen = Integer.parseInt(schueler.getElementsByTagName("Fragen").item(0).getTextContent());
 
-				model.getAlleSchueler().add(new Schueler(name, joker, blamiert, fragen));
+				model.getAlleSchueler().add(new Schueler(name, vorname, joker, blamiert, fragen));
 			}
 
 		} catch (Exception e) {
@@ -91,6 +91,7 @@ public class XMLParser {
 
 	/**
 	 * Create the spielstand
+	 * 
 	 * @param model
 	 * @param doc
 	 */
@@ -99,12 +100,12 @@ public class XMLParser {
 		Element spielstand = (Element) doc.getElementsByTagName("Spielstand").item(0);
 
 		// Partei Lehrer einlesen
-		Element parteiLehrer = (Element) spielstand.getElementsByTagName("Partei").item(0);
+		Element parteiLehrer = (Element) spielstand.getFirstChild();
 		String lehrerName = parteiLehrer.getAttribute("name");
 		int lehrerPkt = Integer.parseInt(parteiLehrer.getTextContent());
 
 		// Partei Schueler einlesen
-		Element parteiSchueler = (Element) spielstand.getElementsByTagName("Partei").item(1);
+		Element parteiSchueler = (Element) parteiLehrer.getNextSibling();
 		String schuelerName = parteiSchueler.getAttribute("name");
 		int schuelerPkt = Integer.parseInt(parteiSchueler.getTextContent());
 
@@ -114,6 +115,7 @@ public class XMLParser {
 
 	/**
 	 * Speichert alle Nutzereingaben in die XML-Datei
+	 * 
 	 * @param model, Model
 	 */
 	public void speichern(Model model) {
@@ -124,14 +126,14 @@ public class XMLParser {
 			Document doc = docBuilder.newDocument();
 
 			// XML-Dokument mit Daten fuellen
-			Element klasse = doc.createElement("Klasse.xml");
+			Element klasse = doc.createElement(datei.getName());
 			doc.appendChild(klasse);
 
 			// Spielstand speichern
 			Element sstand = doc.createElement("Spielstand");
 			klasse.appendChild(sstand);
 
-			//Partei Lehrer speichern
+			// Partei Lehrer speichern
 			Element partei = doc.createElement("Partei");
 			partei.setAttribute("name", model.getSpielstand().getLehrerName());
 			sstand.appendChild(partei);
@@ -139,7 +141,7 @@ public class XMLParser {
 			String pktLehrer = String.valueOf(model.getSpielstand().getPunkteSchueler());
 			partei.appendChild(doc.createTextNode(pktLehrer));
 
-			//Partei Schueler speichern
+			// Partei Schueler speichern
 			partei = doc.createElement("Partei");
 			partei.setAttribute("name", model.getSpielstand().getSchuelerName());
 			sstand.appendChild(partei);
@@ -154,7 +156,9 @@ public class XMLParser {
 			// Schueler eintragen
 			for (Schueler schueler : model.getAlleSchueler()) {
 				Element schuelerXml = doc.createElement("Schueler");
+
 				schuelerXml.setAttribute("name", schueler.getName());
+				schuelerXml.setAttribute("vorname", schueler.getVorname());
 				mitspieler.appendChild(schuelerXml);
 
 				Element joker = doc.createElement("Joker");
