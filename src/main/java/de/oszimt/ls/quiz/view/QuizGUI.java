@@ -188,8 +188,8 @@ public class QuizGUI extends JFrame {
 		lblSpielstand.setBounds(180, 100, 444, 70);
 		contentPane.add(lblSpielstand);
 
-		URL url = Res.class.getResource("oszimt.png");
-		ImageIcon icon = new ImageIcon(url);
+		// URL url = Res.class.getResource("oszimt.png");
+		ImageIcon icon = new ImageIcon("oszimt.png");
 		this.setIconImage(icon.getImage());
 
 		lblFrage = new JLabel[control.FRAGEANZAHL];
@@ -236,7 +236,7 @@ public class QuizGUI extends JFrame {
 			lblFrage[control.getFrageZeiger()].setForeground(new Color(0, 128, 0));
 			control.getZufallsSchueler();
 			control.frageBeantwortet();
-			this.lblSchueler.setText(control.getGewaehlterSchueler().getName());
+			this.lblSchueler.setText(control.getGewaehlterSchueler().getFullName());
 		}
 	}
 

@@ -4,6 +4,7 @@ import java.io.File;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -68,7 +69,8 @@ public class XMLParser {
 			createSpielstand(doc, model);
 
 			// Ebene Schueler / Mitspieler
-			NodeList schuelerList = doc.getElementsByTagName("Mitspieler").item(0).getChildNodes();
+			Element mitspieler = (Element) doc.getElementsByTagName("Mitspieler").item(0);
+			NodeList schuelerList = mitspieler.getElementsByTagName("Schueler");
 
 			// Schueler auslesen
 			for (int i = 0; i < schuelerList.getLength(); i++) {
@@ -100,12 +102,12 @@ public class XMLParser {
 		Element spielstand = (Element) doc.getElementsByTagName("Spielstand").item(0);
 
 		// Partei Lehrer einlesen
-		Element parteiLehrer = (Element) spielstand.getFirstChild();
+		Element parteiLehrer = (Element) spielstand.getElementsByTagName("Partei").item(0);
 		String lehrerName = parteiLehrer.getAttribute("name");
 		int lehrerPkt = Integer.parseInt(parteiLehrer.getTextContent());
 
 		// Partei Schueler einlesen
-		Element parteiSchueler = (Element) parteiLehrer.getNextSibling();
+		Element parteiSchueler = (Element) spielstand.getElementsByTagName("Partei").item(1);
 		String schuelerName = parteiSchueler.getAttribute("name");
 		int schuelerPkt = Integer.parseInt(parteiSchueler.getTextContent());
 
@@ -180,6 +182,7 @@ public class XMLParser {
 			// XML-File schreiben vorbereiten
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			DOMSource source = new DOMSource(doc);
 			// Ziel setzen
 			StreamResult result = new StreamResult(this.datei);
