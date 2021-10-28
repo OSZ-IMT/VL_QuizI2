@@ -164,12 +164,12 @@ public class XMLParser {
 				mitspieler.appendChild(schuelerXml);
 
 				Element joker = doc.createElement("Joker");
-				String pktJoker = String.valueOf(schueler.getFragen());
+				String pktJoker = String.valueOf(schueler.getJoker());
 				joker.appendChild(doc.createTextNode(pktJoker));
 				schuelerXml.appendChild(joker);
 
 				Element blamiert = doc.createElement("Blamiert");
-				String pktBlamiert = String.valueOf(schueler.getFragen());
+				String pktBlamiert = String.valueOf(schueler.getBlamiert());
 				blamiert.appendChild(doc.createTextNode(pktBlamiert));
 				schuelerXml.appendChild(blamiert);
 
